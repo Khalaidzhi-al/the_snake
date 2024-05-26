@@ -132,8 +132,8 @@ class Snake(GameObject):
     def collision(self) -> bool:
         """Определение столкновения головы змейки с телом"""
         return (
-            len(self.positions) > 1 and
-            self.get_head_position() in self.positions[1:]
+            len(self.positions) > 1
+            and self.get_head_position() in self.positions[1:]
         )
 
     # Метод draw класса Snake
