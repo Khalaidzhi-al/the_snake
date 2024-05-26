@@ -44,7 +44,7 @@ clock = pg.time.Clock()
 class GameObject:
     """Создание класса - родителя для игровых объектов"""
 
-    def __init__(self, color):
+    def __init__(self, color: tuple):
         self.position = (GRID_WIDTH // 2 * GRID_SIZE,
                          GRID_HEIGHT // 2 * GRID_SIZE)
         self.body_color = color
