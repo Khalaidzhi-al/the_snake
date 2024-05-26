@@ -44,7 +44,7 @@ clock = pg.time.Clock()
 class GameObject:
     """Создание класса - родителя для игровых объектов"""
 
-    def __init__(self, color: tuple):
+    def __init__(self, color=BOARD_BACKGROUND_COLOR):
         self.position = (GRID_WIDTH // 2 * GRID_SIZE,
                          GRID_HEIGHT // 2 * GRID_SIZE)
         self.body_color = color
@@ -58,8 +58,8 @@ class GameObject:
 class Apple(GameObject):
     """Создание класса для игрового элемента - яблоко"""
 
-    def __init__(self):
-        super().__init__(APPLE_COLOR)
+    def __init__(self, color=APPLE_COLOR):
+        super().__init__(color)
         self.randomize_position([self.position])
 
     def randomize_position(self, busy_positions: list) -> None:
@@ -69,8 +69,10 @@ class Apple(GameObject):
             randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
         )
         while temp_position in busy_positions:
-            temp_position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
-                             randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
+            temp_position = (
+                randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+                randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
+            )
         self.position = temp_position
 
     # Метод draw класса Apple
@@ -84,8 +86,8 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Создание класса для игрового элемента - змейка"""
 
-    def __init__(self):
-        super().__init__(SNAKE_COLOR)
+    def __init__(self, color=SNAKE_COLOR):
+        super().__init__(color)
         self.last = None
         self.positions = [self.position]
         self.direction = RIGHT
@@ -129,8 +131,10 @@ class Snake(GameObject):
 
     def collision(self) -> bool:
         """Определение столкновения головы змейки с телом"""
-        return len(self.positions) > 1 and\
+        return (
+            len(self.positions) > 1 and
             self.get_head_position() in self.positions[1:]
+        )
 
     # Метод draw класса Snake
     def draw(self) -> None:
