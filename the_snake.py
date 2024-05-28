@@ -47,10 +47,9 @@ class GameObject:
 
     def __init__(self,
                  color=BOARD_BACKGROUND_COLOR,
-                 border_color=BORDER_COLOR,
-                 position=SCREEN_CENTER
+                 border_color=BORDER_COLOR
                  ):
-        self.position = position
+        self.position = SCREEN_CENTER
         self.body_color = color
         self.border_color = border_color
 
@@ -71,10 +70,6 @@ class Apple(GameObject):
 
     def randomize_position(self, busy_positions=[SCREEN_CENTER]) -> None:
         """Выбор случайных координат для яблока"""
-        self.position = (
-            randint(0, GRID_WIDTH - 1) * GRID_SIZE,
-            randint(0, GRID_HEIGHT - 1) * GRID_SIZE
-        )
         while self.position in busy_positions:
             self.position = (
                 randint(0, GRID_WIDTH - 1) * GRID_SIZE,
@@ -98,12 +93,14 @@ class Snake(GameObject):
         self.positions = [self.position]
         self.direction = RIGHT
         self.next_direction = self.direction
+        self.length = 1
 
     def reset(self) -> None:
         """Возвращение параметров змейки в начальное состояние"""
         self.positions = [self.position]
         self.direction = choice([LEFT, RIGHT, UP, DOWN])
         self.next_direction = self.direction
+        self.length = 1
 
     # Метод совершения движения
     def move(self) -> None:
@@ -116,6 +113,8 @@ class Snake(GameObject):
         temp_x = (temp_x + x * GRID_SIZE) % SCREEN_WIDTH
         temp_y = (temp_y + y * GRID_SIZE) % SCREEN_HEIGHT
         self.positions.insert(0, (temp_x, temp_y))
+        if self.length < len(self.positions):
+            self.last = self.positions.pop()
 
     def get_head_position(self) -> tuple:
         """Определение текущих координат головы змейки"""
@@ -163,13 +162,11 @@ def main():
         clock.tick(SPEED)
         handle_keys(snake)
         snake.update_direction()
-        snake.move()
         # Выполняем рост змейки если съели яблоко
         if snake.get_head_position() == apple.position:
-            apple.randomize_position([snake.positions])
-        # Иначе совершаем движение выбрасывая последний элемент
-        else:
-            snake.last = snake.positions.pop()
+            apple.randomize_position(snake.positions)
+            snake.length += 1
+        snake.move()
         # При столкновении с собой - сброс
         if snake.collision():
             snake.reset()
